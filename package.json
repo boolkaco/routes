@@ -1,0 +1,27 @@
+{
+  "name": "routes",
+  "version": "0.0.0",
+  "private": true,
+  "main": "server.js",
+  "author": "ar",
+  "engines": {
+    "node": "7.10.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "debug": "~2.2.0",
+    "express": "~4.13.4",
+    "fs": "0.0.1-security",
+    "guid": "0.0.12",
+    "hbs": "~4.0.0",
+    "http": "0.0.0",
+    "morgan": "~1.7.0",
+    "path": "^0.12.7",
+    "serve-favicon": "~2.3.0",
+    "vue": "^2.3.4"
+  }
+}
