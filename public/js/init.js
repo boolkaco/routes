@@ -1,146 +1,37 @@
 var routes = new XMLHttpRequest();
-routes.open('GET', '../json/routes.json', false);
+routes.open('GET', '/get-json', false);
 routes.send();
 
 routes = JSON.parse(routes.responseText);
 
 var routesNew = new XMLHttpRequest();
-routesNew.open('GET', '../json/cities.json', false);
+routesNew.open('GET', '/get-cities-json', false);
 routesNew.send();
 
 routesNew = JSON.parse(routesNew.responseText);
 
-Vue.component('result', {
-    template: `
-        <div id="res">
-            <p class="result">{{ message }}</p>
-        </div>
-    `,
-    props: ['message']
-})
+function getTotal(citiesWay, data) {
+    var totalNew = '';
+    var price = 0;
+    var hours = 0;
+    var distance = 0;
 
-Vue.component('inputCity', {
-    template: `
-        <div class="dialog">
-            <div class="from-city">
-                <label for="from">From:</label>
-                <input list="cities-from" class="from" v-model="messageFrom" v-on:click="clearFieldFrom">
-                <datalist id="cities-from" >
-                    <option value="Kharkov"/>
-                    <option value="Odessa"/>
-                    <option value="Kiev"/>
-                    <option value="Dnepropetrovsk"/>
-                    <option value="Lvov"/>
-                </datalist>
-            </div>
-            <div class="to-city">
-                <label for="to">To:</label>
-                <input list="cities-to" class="to" v-model="messageTo" v-on:click="clearFieldTo">
-                <datalist id="cities-to">
-                    <option value="Kharkov"/>
-                    <option value="Odessa"/>
-                    <option value="Kiev"/>
-                    <option value="Dnepropetrovsk"/>
-                    <option value="Lvov"/>
-                </datalist>
-            </div>
-            <div class="search-method">
-                <label for="to">Search method:</label>
-                <input list="search-method" v-model="messageSearchMethod" v-on:click="clearFieldSearchMethod">
-                <datalist id="search-method">
-                    <option value="Distance"/>
-                    <option value="Price"/>
-                    <option value="Time"/>
-                </datalist>
-            </div>
-            <button class="btn" v-on:click="onClick" >Go</button>
-            <result 
-                v-bind:message="messageResult"       
-            ></result>
-        </div>
-    `,
-    data: function () {
-        return {
-            messageResult: "",
-            messageFrom: "",
-            messageTo: "",
-            messageSearchMethod: ""
-        }
-    },
-    methods: {
-        clearFieldFrom: function () {
-            this.messageFrom = ""
-        },
-        clearFieldTo: function () {
-            this.messageTo = ""
-        },
-        clearFieldSearchMethod: function () {
-            this.messageSearchMethod = ""
-        },
-        onClick: function () {
-            this.messageResult = getMessage(this.messageFrom, this.messageTo, this.messageSearchMethod)
-
-        },
-
+    if(citiesWay.length > 2) {
+        totalNew = ("From " + citiesWay.shift() + " to " + citiesWay.pop() + " via: " + citiesWay.shift());
+    } else {
+        totalNew = ("From " + citiesWay.shift() + " to " + citiesWay.pop());
     }
-})
 
-Vue.component('show', {
-    template: `
-        <div class="routes">
-            <table class="tb">
-                <caption>Routes</caption>
-                <tr>
-                    <th class="th-from">From</th>
-                    <th class="th-to">To</th>
-                    <th>Time start</th>
-                    <th>Time end</th>
-                    <th>Travel time</th>
-                    <th>Distance</th>
-                    <th>Price</th>
-                </tr>
-                <tr
-                    is="routes-component"
-                    v-for="route in routes"
-                    v-bind:route="route"
-                >
-                </tr>
-            </table>
-        </div>
-
-`,
-    props: ['route'],
-    data: function () {
-        return {
-            routes: routes
-        }
+    for(var i = 0; i < data.length; i++) {
+        var time = data[i].travelTime.split(":", 1).toString();
+        price += data[i].price;
+        hours += +time;
+        distance += data[i].distance;
     }
-})
 
-Vue.component('routes-component', {
-    template: `
-        <tr>
-            <td>{{ route.from }}</td>
-            <td>{{ route.to }}</td>
-            <td>{{ route.startTime }}</td>
-            <td>{{ route.endTime }}</td>
-            <td>{{ route.travelTime }}</td>
-            <td>{{ route.distance }}</td>
-            <td>{{ route.price }}</td>
-        </tr>
-    `,
-    props: ['route']
-})
-
-var app = new Vue({
-    template: `
-        <div>
-           <input-city></input-city>
-           <show></show>
-        </div>
-    `,
-    el: "#app"
-})
+    totalNew +=  (". Total: " + distance + " km, " + hours + " hours, " + price + " UAH");
+    return totalNew;
+}
 
 var costsEnd = [];
 
@@ -288,16 +179,15 @@ var Graph = (function (undefined) {
 
 })();
 
-function getMessage(start, end, searchMethod) {
+function getWay(start, end, searchMethod) {
     try {
-        if (start == end) {
-            throw true;
-        }
 
         var mapGraph = {};
 
         if(start != "" && end != "") {
-
+            if (start == end) {
+                throw true;
+            }
             for(var i = 0; i < routesNew.length; i++) {
                 mapGraph[routesNew[i].from] = {};
 
@@ -323,6 +213,7 @@ function getMessage(start, end, searchMethod) {
                             break;
                         default:
                             console.log("Input method search!");
+                            alert("Input method search!");
                             return;
                     }
                 }
@@ -333,14 +224,31 @@ function getMessage(start, end, searchMethod) {
             var cities = graph.findShortestPath(start, end);
             costsEnd.reverse();
             costsEnd = costsEnd.join(' ');
+            var finalPath = [];
             if (cities.length > 2) {
-                return ("From " + cities.shift() + " to " + cities.pop() + " via: " + cities.shift() + " total: "+ costsEnd);
+                for (var i = 0; i < routes.length; i++) {
+                    if (routes[i].from == cities[0] && routes[i].to == cities[1] ||
+                        routes[i].from == cities[1] && routes[i].to == cities[2]) {
+                        finalPath.push(routes[i]);
+                    }
+                }
+                return {finalPath, cities};
             } else {
-                return ("From " + cities.shift() + " to " + cities.pop() + " total: "+ costsEnd);
+
+                for (var i = 0; i < routes.length; i++) {
+                    if (routes[i].from == cities[0] && routes[i].to == cities[1]) {
+                        finalPath.push(routes[i]);
+                    }
+                }
+                return {finalPath, cities};
             }
+        } else {
+            alert("No data");
+            return;
         }
+
     } catch(e) {
-        return ("There is no such route");
-        console.log("Error " + e.name + ":" + e.messageResult + "\n" + e.stack);
+        console.log("There is no such route");
+        alert("There is no such route");
     }
 }

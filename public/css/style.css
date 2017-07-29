@@ -11,12 +11,6 @@ body {
     margin: 0;
     margin-top: 30px;
 }
-.clearfix {
-    content: '';
-    display: table;
-    width: 100%;
-    clear: both;
-}
 
 label {
     display: block;
@@ -52,16 +46,20 @@ input {
     height: 30px;
 }
 
-.routes {
-    position: absolute;
-    left: 370px;
-    right: auto;
+caption {
+    padding: 5px;
 }
 
 table, td, th {
     text-align: center;
     padding: 1px 2px;
     border: 1px solid gray;
+    margin: 20px 35px;
+    left: 20px;
+}
+
+.result {
+    margin-left: 35px;
 }
 
 .th-from, .th-to {

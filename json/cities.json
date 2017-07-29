@@ -1,0 +1,12 @@
+[
+  { "from": "Kharkov", "info":[{ "to": "Odessa",          "price": 500, "travelTime": "17:00", "distance": 400 },
+    { "to": "Dnepropetrovsk",  "price": 150, "travelTime": "5:00",  "distance": 420 },
+    { "to": "Kiev", 	          "price": 250, "travelTime": "8:00",  "distance": 570 }] },
+  { "from": "Odessa", "info":[{  "to": "Kiev",            "price": 350, "travelTime": "10:00", "distance": 470 },
+    {  "to": "Lvov",            "price": 550, "travelTime": "12:00", "distance": 600 }] },
+  { "from": "Kiev", "info":[{    "to": "Lvov",            "price": 270, "travelTime": "6:00",  "distance": 540 }] },
+  { "from": "Dnepropetrovsk", "info":[{ "to": "Kiev",     "price": 235, "travelTime": "9:00",  "distance": 470 },
+    { "to": "Odessa",   "price": 300, "travelTime": "13:00", "distance": 520 },
+    { "to": "Lvov",     "price": 670, "travelTime": "18:00", "distance": 1100 }] },
+  { "from": "lvov", "info":{} }
+]
